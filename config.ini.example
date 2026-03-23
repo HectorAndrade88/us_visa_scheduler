@@ -1,32 +1,108 @@
 [PERSONAL_INFO]
 ; Account and current appointment info from https://ais.usvisa-info.com
-USERNAME = account@gmail.com
-PASSWORD = account_pass
+USERNAME = account@example.com
+PASSWORD = account_password
 ; Find SCHEDULE_ID in re-schedule page link:
-; https://ais.usvisa-info.com/en-am/niv/schedule/{SCHEDULE_ID}/appointment
+; https://ais.usvisa-info.com/es-co/niv/schedule/{SCHEDULE_ID}/appointment
 SCHEDULE_ID = 99999999
 ; Target Period:
-PRIOD_START = 2023-03-20
-PRIOD_END = 2023-06-01
-; Change "en-ca", based on your embassy Abbreviation in embassy.py list.
-YOUR_EMBASSY = en-ca
+PRIOD_START = 2026-06-15
+PRIOD_END = 2026-11-01
+; Change "es-co-bog", based on your embassy Abbreviation in embassy.py list.
+YOUR_EMBASSY = es-co-bog
 
 [CHROMEDRIVER]
 ; Details for the script to control Chrome
 LOCAL_USE = True
+; Required when LOCAL_USE = True (local binary, no auto-download)
+CHROMEDRIVER_PATH = C:\\tools\\chromedriver.exe
 ; Optional: HUB_ADDRESS is mandatory only when LOCAL_USE = False
 HUB_ADDRESS = http://localhost:9515/wd/hub
 
 [NOTIFICATION]
-; Get email notifications via https://sendgrid.com/ (optional)
-SENDGRID_API_KEY = 
-SENDGRID_EMAIL_SENDER = 
+; Optional email notifications (Gmail or Outlook 365)
+EMAIL_ENABLED = False
+; Gmail: smtp.gmail.com | Outlook 365: smtp.office365.com
+SMTP_HOST = smtp.gmail.com
+SMTP_PORT = 587
+EMAIL_FROM = your_email@example.com
+EMAIL_TO = destination@example.com
+SMTP_USERNAME = your_email@example.com
+; Prefer env var SMTP_APP_PASSWORD. Set here only if needed.
+SMTP_APP_PASSWORD =
 
 [TIME]
 ; Time between retries/checks for available dates (seconds)
-RETRY_TIME = 60
+RETRY_TIME = 600
+; Additional random jitter in seconds to avoid fixed polling patterns
+RETRY_JITTER_SECONDS = 0
 ; Cooling down after WORK_LIMIT_TIME hours of work (Avoiding Ban)(hours)
 WORK_LIMIT_TIME = 1.5
 WORK_COOLDOWN_TIME = 2.25
 ; Temporary Banned (empty list): wait COOLDOWN_TIME (hours)
 BAN_COOLDOWN_TIME = 5
+; Cooldown used when explicit network/403/rate-limit block is detected
+BLOCK_COOLDOWN_TIME = 2
+; Max automatic relogin attempts when API returns HTTP 401
+AUTH_RECOVERY_MAX_ATTEMPTS = 3
+; Waiting time in seconds before relogin after HTTP 401
+AUTH_RECOVERY_WAIT_SECONDS = 20
+; Consecutive handled exceptions before forcing full browser restart
+FULL_BROWSER_RESTART_FAILURE_STREAK = 4
+; Wait time before reopening browser after forced full restart (seconds)
+FULL_BROWSER_RESTART_WAIT_SECONDS = 300
+; Activate degraded mode after N consecutive handled failures
+DEGRADED_MODE_FAILURE_STREAK = 4
+; Stable successful cycles required to exit degraded mode
+DEGRADED_MODE_RECOVERY_SUCCESS_STREAK = 3
+; Multiplier for wait time while degraded mode is active
+DEGRADED_MODE_WAIT_MULTIPLIER = 2.5
+; Maximum wait between retries while degraded mode is active (seconds)
+DEGRADED_MODE_MAX_WAIT_SECONDS = 900
+; Maximum candidate dates to attempt per cycle while degraded mode is active
+DEGRADED_MODE_MAX_DATES_PER_CYCLE = 1
+; Long cooldown pause used by circuit breaker (seconds)
+LONG_COOLDOWN_SECONDS = 1800
+; Long cooldown pause when portal reports viewing limit (seconds)
+VIEW_LIMIT_COOLDOWN_SECONDS = 7200
+; Number of hard browser restarts in window before triggering long cooldown
+LONG_COOLDOWN_HARD_RESTART_THRESHOLD = 2
+; Time window to evaluate hard restart frequency (seconds)
+LONG_COOLDOWN_WINDOW_SECONDS = 3600
+; Consecutive network failures before triggering long cooldown
+LONG_COOLDOWN_NETWORK_STREAK = 8
+; Consecutive block detections before triggering long cooldown
+LONG_COOLDOWN_BLOCK_STREAK = 3
+; Wait after consular reschedule before CAS reschedule (seconds)
+CAS_DELAY_AFTER_CONSULAR = 5
+; Max candidate dates to try in each cycle when one fails
+MAX_DATES_PER_CYCLE = 3
+; Max CAS dates to test in each CAS cycle
+MAX_CAS_DATES_PER_CYCLE = 5
+; Faster path: submit directly to backend before UI interactions
+DIRECT_SUBMIT_FIRST = True
+; If direct submit is not confirmed, fallback to UI flow
+DIRECT_SUBMIT_UI_FALLBACK = True
+; Number of status checks after direct submit
+DIRECT_STATUS_RECHECKS = 2
+; Wait between direct submit status checks (seconds)
+DIRECT_STATUS_RECHECK_WAIT_SECONDS = 0.8
+
+[NETWORK_RECOVERY]
+; Optional: execute a local command to rotate IP when connectivity keeps failing
+IP_ROTATION_ENABLED = False
+; Example (Windows): rasdial "MyVPN" /disconnect && rasdial "MyVPN"
+; Example (Linux): nmcli con down id my-vpn && nmcli con up id my-vpn
+IP_ROTATION_COMMAND =
+; Start rotating only after this many consecutive network failures
+IP_ROTATION_TRIGGER_STREAK = 2
+; Maximum rotation executions per bot run
+IP_ROTATION_MAX_ATTEMPTS = 3
+; Wait after running rotation command (seconds)
+IP_ROTATION_WAIT_SECONDS = 20
+; Max time allowed for the command itself (seconds)
+IP_ROTATION_COMMAND_TIMEOUT_SECONDS = 120
+
+[LOGGING]
+LEVEL = INFO
+FORMAT = %(asctime)s %(levelname)s %(name)s %(message)s
